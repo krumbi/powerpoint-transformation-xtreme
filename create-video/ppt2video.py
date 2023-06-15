@@ -62,9 +62,6 @@ def create_video(image_files, mp4_files, break_duration=1):
         # Set the audio for the image clip
         image_clip = image_clip.set_audio(audio)
 
-        # Resize the image clip to fit the resolution of the MP4 file (optional)
-        # image_clip = image_clip.resize(height=480)  # Adjust the height as needed
-
         # Add original video in the bottom right corner with width of 300 pixels
         original_video = original_video.resize(width=300)
         original_video = original_video.set_position(("right", "bottom")).set_duration(duration)
