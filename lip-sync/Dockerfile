@@ -1,19 +1,23 @@
-# Verwenden Sie eine Python-Basisimage als Grundlage
-FROM python:3.10
+FROM python:3.8
 
-# Setzen Sie das Arbeitsverzeichnis im Container
+RUN pip install --upgrade pip
+
 WORKDIR /app
 
-RUN git clone https://github.com/Markfryazino/wav2lip-hq.git
-# Kopieren Sie die Anforderungen des Projekts in den Container
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx
 
-RUN cd wav2lip-hq
-RUN pip install gdown
-RUN pip install librosa==0.8.0
+RUN git clone https://github.com/Markfryazino/wav2lip-hq.git
+
+WORKDIR /app/wav2lip-hq
+
 RUN wget "https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth" -O "face_detection/detection/sfd/s3fd.pth"
 
-# Installieren Sie die Python-Abhängigkeiten
 RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install gdown
+RUN pip install librosa==0.8.0
+RUN pip install numba==0.53.1
 
 COPY ./GdriveDown.py .
 RUN python GdriveDown.py 
