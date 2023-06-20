@@ -1,0 +1,2 @@
+# Downloading models
+Because the size of the pretrained models exceed GitHub's maximum file size, please download the .pt-files from following [Link](https://github.com/CorentinJ/Real-Time-Voice-Cloning/wiki/Pretrained-models): https://github.com/CorentinJ/Real-Time-Voice-Cloning/wiki/Pretrained-models
