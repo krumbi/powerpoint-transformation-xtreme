@@ -8,6 +8,7 @@ import openai
 import json
 import re
 
+language_map = {"en": "English", "de": "German"}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', metavar='INPUT', type=str, help='the input file')
@@ -15,6 +16,8 @@ parser.add_argument('key', metavar='KEY', type=str, help='the OpenAI API key')
 parser.add_argument('-o', '--output', metavar='OUTPUT', default=pathlib.Path("output"), type=pathlib.Path, help='the output directory')
 parser.add_argument('-m', '--model', metavar='MODEL', default="gpt-3.5-turbo-16k", type=str, help='the OpenAI model')
 parser.add_argument('-t', '--temperature', metavar='TEMPERATURE', default=0.3, type=float, help='the OpenAI temperature')
+parser.add_argument('-l', '--language', metavar='LANGUAGE', default="en", choices=['en', 'de'], help='the language of the output text')
+parser.add_argument('-p', '--prompt', metavar='PROMPT', default="", type=str, help='the prompt extension (e.g. "As a lecture")')
 parser.add_argument('-d', '--debug', action='store_true', help='enable debug logging')
 args = parser.parse_args()
 
@@ -96,8 +99,10 @@ if args.debug:
 log.info("Generating ChatGPT prompt...")
 
 chatgpt_prompt = \
-    """Can you generate me a text for a spoken presentation based on the following information extracted from presentation slides?
-Please keep the separation in slides. It should be a bit more formal and structured. Please add some information where it is useful. Thank you very much!"""
+    f"""Can you generate me a text for a spoken presentation based on the following information extracted from presentation slides?
+Please keep the separation in slides. It should be a bit more formal and structured. Please add some information where it is useful.
+Please generate the text in {language_map[args.language]}. {args.prompt}
+Thank you very much!"""
 
 chatgpt_prompt += "\n\n"
 
