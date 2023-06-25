@@ -1,17 +1,33 @@
-# Use a base image with Python installed
+# FROM python:3.9
+
+# # Set working directory
+# WORKDIR /app
+
+# RUN apt-get update && apt-get install -y libsndfile1
+
+# # Copy requirements.txt and install dependencies
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# # Copy the source code
+# COPY . .
+
+# # Run the voice cloning script
+# CMD ["python", "voice_cloning_tts.py"]
+
 FROM python:3.9
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the requirements.txt file
+RUN apt-get update && apt-get install -y libsndfile1
+
+# Copy requirements.txt and install dependencies
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install the required dependencies
-RUN pip install -r requirements.txt
-
-# Copy the project files to the container
+# Copy the source code
 COPY . .
 
-# Run the python script
-CMD ["python", "voice_cloning_with_tts.py"]
+# Run the voice cloning script with text files as arguments
+CMD ["python", "voice_cloning_tts.py"]

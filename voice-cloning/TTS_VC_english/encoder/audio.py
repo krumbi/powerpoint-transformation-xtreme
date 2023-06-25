@@ -61,14 +61,25 @@ def preprocess_wav(fpath_or_wav: Union[str, Path, np.ndarray],
     return wav
 
 
+# def wav_to_mel_spectrogram(wav):#, sample_rate=sampling_rate):
+#     frames = librosa.feature.melspectrogram(
+#         y=wav,
+#         sr=sampling_rate,
+#         n_fft=int(sampling_rate * mel_window_length / 1000),
+#         hop_length=int(sampling_rate * mel_window_step / 1000),
+#         n_mels=mel_n_channels
+#     )
+#     frames = librosa.power_to_db(frames, ref=np.max)
+#     frames = frames.astype(np.float32).T
+#     return frames
 def wav_to_mel_spectrogram(wav):
     """
     Derives a mel spectrogram ready to be used by the encoder from a preprocessed audio waveform.
     Note: this not a log-mel spectrogram.
     """
     frames = librosa.feature.melspectrogram(
-        wav,
-        sampling_rate,
+        y=wav,
+        sr=sampling_rate,
         n_fft=int(sampling_rate * mel_window_length / 1000),
         hop_length=int(sampling_rate * mel_window_step / 1000),
         n_mels=mel_n_channels
