@@ -19,6 +19,7 @@ services:
       - data/avatar-generation/input:/input # Wird von GUI angelegt, enthält Prompt für Avatar als avatar.txt
       - data/avatar-generation/output:/output # Legt avatar.png ab
 
+
   text-to-speech:
     image: text-to-speech
     build:

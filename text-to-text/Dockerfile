@@ -33,6 +33,6 @@ COPY src/ ./
 
 RUN mkdir -p $OUTPUT_PATH
 
-ENTRYPOINT ["sh", "-c", "python3", "main.py", "${INPUT_PATH}", "${API_KEY}", "-o ${OUTPUT_PATH}", "-m ${OPENAI_MODEL}", "-t ${MODEL_TEMPERATURE}", "-l ${OUTPUT_LANGUAGE}", "-p ${PROMPT_ADDITION}", "-d"]
+ENTRYPOINT ["sh", "-c", "python3", "main.py", "/input/slides.pptx", "${API_KEY}", "-o /output", "-m ${OPENAI_MODEL}", "-t ${MODEL_TEMPERATURE}", "-l ${OUTPUT_LANGUAGE}", "-p ${PROMPT_ADDITION}", "-d"]
 
 #CMD ["${INPUT_PATH}", "${API_KEY}", "-o ${OUTPUT_PATH}", "-m ${OPENAI_MODEL}", "-t ${MODEL_TEMPERATURE}", "-l ${OUTPUT_LANGUAGE}", "-p ${PROMPT_ADDITION}", "-d"]
