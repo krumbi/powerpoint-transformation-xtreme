@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  text-to-text:
+    image: text-to-text
+    build:
+      context: ../text-to-text
+      dockerfile: Dockerfile
+    volumes:
+      - data/text-to-text/input:/input
+      - data/text-to-text/output:/output
+
+  avatar-generation:
+    image: avatar-generation
+    build:
+      context: ../avatar-generation
+      dockerfile: Dockerfile
+    volumes:
+      - data/avatar-generation/input:/input
+      - data/avatar-generation/output:/output
+
+  text-to-speech:
+    image: text-to-speech
+    build:
+      context: ../voice-cloning/TTS_VC_english
+      dockerfile: Dockerfile
+    depends_on:
+      text-to-text:
+        condition: service_completed_successfully
+    volumes:
+      - data/text-to-speech/input:/input
+      - data/text-to-text/output:/input/ttt
+      - data/text-to-speech/output:/output
+
+  lip-sync:
+    image: lip-sync
+    build:
+      context: ../lip-sync
+      dockerfile: Dockerfile
+    depends_on:
+      text-to-speech:
+        condition: service_completed_successfully
+      avatar-generation:
+        condition: service_completed_successfully
+    volumes:
+      - data/lip-sync/input:/input
+      - data/text-to-speech/output:/input/tts
+      - data/lip-sync/output:/output
+  
+  video-generation:
+    image: video-generation
+    build:
+      context: ../video-generation
+      dockerfile: Dockerfile
+    depends_on:
+      lip-sync:
+        condition: service_completed_successfully
+    volumes:
+      - data/video-generation/input:/input
+      - data/lip-sync/output:/input/ls
+      - data/video-generation/output:/output
+
+
+  
+  

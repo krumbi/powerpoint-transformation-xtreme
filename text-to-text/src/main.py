@@ -17,7 +17,7 @@ parser.add_argument('-o', '--output', metavar='OUTPUT', default=pathlib.Path("ou
 parser.add_argument('-m', '--model', metavar='MODEL', default="gpt-3.5-turbo-16k", type=str, help='the OpenAI model')
 parser.add_argument('-t', '--temperature', metavar='TEMPERATURE', default=0.3, type=float, help='the OpenAI temperature')
 parser.add_argument('-l', '--language', metavar='LANGUAGE', default="en", choices=['en', 'de'], help='the language of the output text')
-parser.add_argument('-p', '--prompt', metavar='PROMPT', default="", type=str, help='the prompt extension (e.g. "As a lecture")')
+parser.add_argument('-p', '--prompt', metavar='PROMPT', default="", type=str, help='the prompt addition (e.g. "As a lecture")')
 parser.add_argument('-d', '--debug', action='store_true', help='enable debug logging')
 args = parser.parse_args()
 
