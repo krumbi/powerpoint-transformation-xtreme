@@ -1,6 +1,6 @@
 # execute these two commands from the root level of the project
 
-docker build -t avatargen -f avatar-generation/Dockerfile .
+docker build -t avatar-generation .
 
 ## adjust the description with the description of the human you want to have
-docker run -e DESCRIPTION="woman with glasses" -v "$(pwd)/output:/app/avatar" avatargen
+docker run -v "$(pwd)/input:/input" -v "$(pwd)/output:/output" -e API_KEY=<api_key>  avatar-generation
