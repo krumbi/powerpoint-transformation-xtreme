@@ -11,13 +11,8 @@ WORKDIR /app/Wav2Lip
 RUN wget 'https://iiitaphyd-my.sharepoint.com/personal/radrabha_m_research_iiit_ac_in/_layouts/15/download.aspx?share=EdjI7bZlgApMqsVoEUUXpLsBxqXbn5z8VTmoxp55YNDcIA' -O 'checkpoints/wav2lip_gan.pth'
 RUN wget "https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth" -O "face_detection/detection/sfd/s3fd.pth"
 
-COPY Avatar.png /app/Wav2Lip
-
-COPY Audio.wav /app/Wav2Lip
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update
 RUN apt update && apt install -y ffmpeg
 
 WORKDIR /app/Wav2Lip
@@ -26,8 +21,8 @@ WORKDIR /app/Wav2Lip
 
 COPY multiple_inference.py /app/Wav2Lip
 
-ENTRYPOINT ["python", "multiple_inference.py"]
-
+# ENTRYPOINT ["python", "multiple_inference.py", "/input", "/output"]
+ENTRYPOINT python multiple_inference.py input output
 
 
 
