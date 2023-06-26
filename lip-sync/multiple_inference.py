@@ -104,10 +104,9 @@ def main():
 
     avatar_file = str(args.input / 'avatar.png')
 
-    for audio_file in audio_files:
+    for i, audio_file in enumerate(audio_files, start=1):
         # Generate output filename based on the input audio filename
-        basename = os.path.basename(os.path.splitext(audio_file)[0])  # Extract filename without extension
-        output_file = str(args.output / (basename + '.mp4'))  # Add results/ directory and extension
+        output_file = str(args.output / f"video_{i}.mp4")
         
         # Adjust lip-sync parameters
         subprocess.run(["python", "inference.py", 
