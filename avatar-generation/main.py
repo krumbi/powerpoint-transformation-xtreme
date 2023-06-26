@@ -60,7 +60,8 @@ for input_file in input_files:
                     "Your request activated the API's safety filters and could not be processed."
                     "Please modify the prompt and try again.")
             if artifact.type == generation.ARTIFACT_IMAGE:
-                output_filename = os.path.splitext(os.path.basename(input_file))[0] + '.png'
+                # output_filename = os.path.splitext(os.path.basename('avatar')) + '.png'
+                output_filename = "avatar.png"
                 img = Image.open(io.BytesIO(artifact.binary))
                 img.save(str(args.output / output_filename))  # Save image to the output directory with the corresponding filename
 

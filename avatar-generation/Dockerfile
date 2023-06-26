@@ -12,5 +12,5 @@ COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run main.py when the container launches
-ENTRYPOINT python main.py input output $API_KEY
+ENTRYPOINT python main.py /input /output $API_KEY
 
