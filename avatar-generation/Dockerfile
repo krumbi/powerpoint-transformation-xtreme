@@ -5,14 +5,12 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY ./avatar-generation /app
-
-# Create /app/avatar directory
-RUN mkdir /app/avatar
+COPY ./ /app
 
 # Install the dependencies
-COPY avatar-generation/requirements.txt /app
+COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run main.py when the container launches
-CMD ["python", "main.py"]
+ENTRYPOINT python main.py input output $API_KEY
+
