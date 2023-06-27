@@ -12,7 +12,7 @@ ENV PYTHONFAULTHANDLER=1 \
   OPENAI_MODEL=gpt-3.5-turbo-16k \
   MODEL_TEMPERATURE=0.3 \
   OUTPUT_LANGUAGE=en \
-  PROMPT_ADDITION=""
+  PROMPT_ADDITION="%NONE%"
 
 # System deps:
 RUN pip install "poetry"
@@ -32,6 +32,6 @@ COPY src/ ./
 RUN mkdir ${INPUT_PATH}
 RUN mkdir ${OUTPUT_PATH}
 
-ENTRYPOINT "python3 main.py ${INPUT_PATH}/slides.pptx ${API_KEY} -o ${OUTPUT_PATH} -m ${OPENAI_MODEL} -t ${MODEL_TEMPERATURE} -l ${OUTPUT_LANGUAGE} -p ${PROMPT_ADDITION} -d"
+ENTRYPOINT python3 main.py ${INPUT_PATH}/slides.pptx -k ${API_KEY} -o ${OUTPUT_PATH} -m ${OPENAI_MODEL} -t ${MODEL_TEMPERATURE} -l ${OUTPUT_LANGUAGE} -p ${PROMPT_ADDITION}
 
 #CMD ["${INPUT_PATH}", "${API_KEY}", "-o ${OUTPUT_PATH}", "-m ${OPENAI_MODEL}", "-t ${MODEL_TEMPERATURE}", "-l ${OUTPUT_LANGUAGE}", "-p ${PROMPT_ADDITION}", "-d"]

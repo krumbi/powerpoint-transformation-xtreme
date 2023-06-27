@@ -42,6 +42,10 @@ if not args.output.exists():
     log.error(f"Output directory {args.output} does not exist")
     sys.exit(1)
 
+if not args.debug and args.key is None:
+    log.error("OpenAI API key is required if not in debug mode")
+    sys.exit(1)
+
 prs = pptx.Presentation(args.input)
 
 raw_text = []
@@ -120,6 +124,8 @@ if args.debug:
         f.write(chatgpt_prompt)
     
     log.debug("Writing ChatGPT prompt finished")
+
+
 
 if not (args.debug and args.key is None):
     openai.api_key = args.key
