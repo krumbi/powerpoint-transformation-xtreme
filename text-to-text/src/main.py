@@ -12,7 +12,7 @@ language_map = {"en": "English", "de": "German"}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', metavar='INPUT', type=str, help='the input file')
-parser.add_argument('key', metavar='KEY', type=str, help='the OpenAI API key')
+parser.add_argument('-k', '--key', metavar='KEY', type=str, help='the OpenAI API key')
 parser.add_argument('-o', '--output', metavar='OUTPUT', default=pathlib.Path("output"), type=pathlib.Path, help='the output directory')
 parser.add_argument('-m', '--model', metavar='MODEL', default="gpt-3.5-turbo-16k", type=str, help='the OpenAI model')
 parser.add_argument('-t', '--temperature', metavar='TEMPERATURE', default=0.3, type=float, help='the OpenAI temperature')
@@ -101,7 +101,7 @@ log.info("Generating ChatGPT prompt...")
 chatgpt_prompt = \
     f"""Can you generate me a text for a spoken presentation based on the following information extracted from presentation slides?
 Please keep the separation in slides. It should be a bit more formal and structured. Please add some information where it is useful.
-Please generate the text in {language_map[args.language]}. {args.prompt}
+Please generate the text in {language_map[args.language]}. {args.prompt if args.prompt != '$NONE$' else ''}
 Thank you very much!"""
 
 chatgpt_prompt += "\n\n"
@@ -113,7 +113,6 @@ chatgpt_prompt.strip()
 
 log.log(log.INFO, "Generating ChatGPT prompt finished")
 
-
 if args.debug:
     log.debug(f"Writing ChatGPT prompt to {args.output.absolute()}")
 
@@ -122,7 +121,7 @@ if args.debug:
     
     log.debug("Writing ChatGPT prompt finished")
 
-if not args.debug:
+if not (args.debug and args.key is None):
     openai.api_key = args.key
 
     log.info("Requesting ChatGPT completion...")
@@ -151,11 +150,19 @@ splitted_text = [part for part in map(str.strip, split_pattern.split(text)) if l
 
 log.info("Splitted text into slides")
 
+log.info("Removing special characters...")
+
+special_character_regex = re.compile(r"[^a-zA-Z0-9\r\n\s]")
+cleaned_text = [special_character_regex.sub("", part) for part in splitted_text]
+#cleaned_text = splitted_text
+
+log.info("Removed special characters")
+
 log.info("Writing slides to files...")
 
-for i in range(1, len(splitted_text), 2):
-    with open(args.output.joinpath(f"slide_{splitted_text[i - 1]}.txt"), "w", encoding="utf-8") as f:
-        f.write(splitted_text[i])
+for i in range(1, len(cleaned_text), 2):
+    with open(args.output.joinpath(f"slide_{cleaned_text[i - 1]}.txt"), "w", encoding="utf-8") as f:
+        f.write(cleaned_text[i])
 
 log.info("Writing slides to files finished")
 
