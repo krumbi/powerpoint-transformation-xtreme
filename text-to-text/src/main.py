@@ -101,7 +101,7 @@ log.info("Generating ChatGPT prompt...")
 chatgpt_prompt = \
     f"""Can you generate me a text for a spoken presentation based on the following information extracted from presentation slides?
 Please keep the separation in slides. It should be a bit more formal and structured. Please add some information where it is useful.
-Please generate the text in {language_map[args.language]}. {args.prompt if args.prompt != '$NONE$' else ''}
+Please generate the text in {language_map[args.language]}. {args.prompt if args.prompt != '%NONE%' else ''}
 Thank you very much!"""
 
 chatgpt_prompt += "\n\n"
