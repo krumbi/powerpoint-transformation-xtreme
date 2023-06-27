@@ -8,6 +8,7 @@ from encoder import inference as encoder
 from synthesizer.inference import Synthesizer
 from vocoder import inference as vocoder
 import argparse
+import re
 
 # Define paths for model weights
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -65,7 +66,9 @@ def main():
     os.makedirs(output_folder, exist_ok=True)
 
     # Find all TXT and MP3 files in the input folder
-    text_files = sorted(glob.glob(os.path.join(input_folder, "*.txt")))
+    file_regex = re.compile(r"slide_(\d+).txt")
+    text_files = [file, file_regex.match(os.path.basename(file)).groups[1] for file in glob.glob(os.path.join(input_folder, "*.txt"))]
+    text_files = sorted(text_files, key=lambda x: x[1])
     mp3_files = sorted(glob.glob(os.path.join(input_folder, "*.mp3")))
 
     # Check if there is at least one mp3 file in the input folder
