@@ -1,7 +1,13 @@
-import sys
-from time import sleep
-from gooey import Gooey, GooeyParser
+import gui
+
+from gooey import Gooey
+
 import pathlib
+import shutil
+
+steps = ["text-to-text", "voice-cloning", "avatar-generation", "lip-sync", "video-generation"]
+data_folder = pathlib.Path("data")
+resource_folder = pathlib.Path("resources")
 
 
 @Gooey(program_name="PowerPoint Transformation Xtreme",
@@ -9,50 +15,29 @@ import pathlib
        progress_expr="x[0] / x[1] * 100",
        disable_progress_bar_animation=False)
 def main():
-    parser = GooeyParser()
-    parser.add_argument(
-        "pptx_file",
-        metavar="PPTX file",
-        type=pathlib.Path,
-        help="name of the file to read",
-        widget="FileChooser",
-    )
-    parser.add_argument(
-        "output_file",
-        metavar="Output file",
-        type=pathlib.Path,
-        help="name of the file to write",
-        widget="FileSaver",
-    )
-    parser.add_argument(
-        "text_prompt",
-        metavar="Text prompt",
-        type=str,
-        help="Addition to text prompt in order to customize style",
-    )
-    parser.add_argument(
-        "avatar_prompt",
-        metavar="Avatar prompt",
-        default="professor with glasses",
-        type=str,
-        help="Addition to avatar prompt in order to customize style",
-    )
-    parser.add_argument(
-        "language",
-        metavar="Language",
-        choices=["en", "de (not implemented yet)"],
-        default="en",
-        help="Language of the text of the video",
-    )
+    print("Running main")
+    clear_data_folder()
+    generate_folders()
+    voices = get_voices()
+    parser = gui.show_ui(voices)
     args = parser.parse_args()
+    
+    print(args)
+    parser.error("This is a demo error message")
 
-    for i in range(10):
-        print("progress: {}/{}".format(i + 1, 10))
-        sys.stdout.flush()
-        sleep(1)
-        print("Other message")
-        sys.stdout.flush()
-        sleep(1)
+
+def get_voices() -> list[str]:
+    return sorted([file.stem for file in resource_folder.joinpath("voices").glob("*.mp3")])
+
+def clear_data_folder():
+    shutil.rmtree("data", ignore_errors=True)
+    data_folder.mkdir(parents=False, exist_ok=False)
+
+
+def generate_folders():
+    for step in steps:
+        data_folder.joinpath(step).joinpath("input").mkdir(parents=True, exist_ok=False)
+        data_folder.joinpath(step).joinpath("output").mkdir(parents=False, exist_ok=False)
 
 
 if __name__ == "__main__":
