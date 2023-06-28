@@ -28,7 +28,10 @@ def main():
     copy_voice_file(args.voice, args.voice_file)
     create_env_file(args)
 
-    run_docker()
+    code = run_docker()
+
+    if code != 0:
+        raise Exception("Docker failed")
 
     copy_output_file(args.output_file, args.pptx_file)
 
@@ -37,10 +40,15 @@ def run_docker():
     command = "docker compose -f compose.yaml up"
     process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 
-    while process.poll() is None:
+    return_code = None
+
+    while return_code is None:
+        return_code = process.poll()
         output = process.stdout.readline().decode("utf-8").strip()
         if (len(output) > 0):
             print(output)
+    
+    return return_code
 
 
 def create_env_file(args):
