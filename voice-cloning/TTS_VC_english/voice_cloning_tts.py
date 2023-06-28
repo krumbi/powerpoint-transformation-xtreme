@@ -67,8 +67,9 @@ def main():
 
     # Find all TXT and MP3 files in the input folder
     file_regex = re.compile(r"slide_(\d+).txt")
-    text_files = [file, file_regex.match(os.path.basename(file)).groups[1] for file in glob.glob(os.path.join(input_folder, "*.txt"))]
+    text_files = [(file, int(file_regex.match(os.path.basename(file)).groups()[0])) for file in glob.glob(os.path.join(input_folder, "*.txt"))]
     text_files = sorted(text_files, key=lambda x: x[1])
+    print(text_files)
     mp3_files = sorted(glob.glob(os.path.join(input_folder, "*.mp3")))
 
     # Check if there is at least one mp3 file in the input folder
@@ -79,7 +80,7 @@ def main():
     mp3_file = mp3_files[0]
 
     # Clone voice
-    for index, text_file in enumerate(text_files, start=1):
+    for index, (text_file, _) in enumerate(text_files, start=1):
         with open(text_file, 'r') as file:
             text = file.read()
             clone_voice(mp3_file, text, output_folder, index)

@@ -3,6 +3,7 @@ import subprocess
 import os
 import glob
 import pathlib
+import re
 from pdf2image import convert_from_path
 from moviepy.editor import *
 
@@ -96,7 +97,10 @@ def main():
 
     # Find all PPTX and MP4 files in the input folder
     pptx_files = glob.glob(os.path.join(input_folder, "*.pptx"))
-    mp4_files = sorted(glob.glob(os.path.join(input_folder, "*.mp4")))
+    file_regex = re.compile(r"(\d+)\.mp4")
+    mp4_files = [(file, int(file_regex.search(os.path.basename(file)).group(1))) for file in glob.glob(os.path.join(input_folder, "*.mp4"))]
+    mp4_files = sorted(mp4_files, key=lambda x: x[1])
+    # mp4_files = sorted(glob.glob(os.path.join(input_folder, "*.mp4")))
 
     # Convert each PPTX file to PDF and then to video
     all_image_paths = []
