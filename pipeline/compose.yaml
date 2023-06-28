@@ -9,6 +9,7 @@ services:
     volumes:
       - ./data/text-to-text/input:/input # Wird von GUI angelegt, enthält slides.pptx
       - ./data/text-to-text/output:/output # Legt slide_X.txt ab
+    env_file: run.env
 
   avatar-generation:
     image: avatar-generation
@@ -18,7 +19,7 @@ services:
     volumes:
       - ./data/avatar-generation/input:/input # Wird von GUI angelegt, enthält Prompt für Avatar als avatar.txt
       - ./data/avatar-generation/output:/output # Legt avatar.png ab
-
+    env_file: run.env
 
   text-to-speech:
     image: text-to-speech
