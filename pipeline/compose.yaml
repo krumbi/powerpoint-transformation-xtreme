@@ -7,8 +7,8 @@ services:
       context: ../text-to-text
       dockerfile: Dockerfile
     volumes:
-      - data/text-to-text/input:/input # Wird von GUI angelegt, enthält slides.pptx
-      - data/text-to-text/output:/output # Legt slide_X.txt ab
+      - ./data/text-to-text/input:/input # Wird von GUI angelegt, enthält slides.pptx
+      - ./data/text-to-text/output:/output # Legt slide_X.txt ab
 
   avatar-generation:
     image: avatar-generation
@@ -16,8 +16,8 @@ services:
       context: ../avatar-generation
       dockerfile: Dockerfile
     volumes:
-      - data/avatar-generation/input:/input # Wird von GUI angelegt, enthält Prompt für Avatar als avatar.txt
-      - data/avatar-generation/output:/output # Legt avatar.png ab
+      - ./data/avatar-generation/input:/input # Wird von GUI angelegt, enthält Prompt für Avatar als avatar.txt
+      - ./data/avatar-generation/output:/output # Legt avatar.png ab
 
 
   text-to-speech:
@@ -29,9 +29,9 @@ services:
       text-to-text:
         condition: service_completed_successfully
     volumes:
-      - data/text-to-speech/input:/input # Enthält voice.mp3
-      - data/text-to-text/output:/input/ttt # Enthält slide_X.txt von text-to-text
-      - data/text-to-speech/output:/output # Legt audio_X.wav ab
+      - ./data/text-to-speech/input:/input # Enthält voice.mp3
+      - ./data/text-to-text/output:/input/ttt # Enthält slide_X.txt von text-to-text
+      - ./data/text-to-speech/output:/output # Legt audio_X.wav ab
 
   lip-sync:
     image: lip-sync
@@ -44,21 +44,21 @@ services:
       avatar-generation:
         condition: service_completed_successfully
     volumes:
-      - data/avatar-generation/output:/input # Enthält avatar.png
-      - data/text-to-speech/output:/input/tts # Enthält audio_X.wav von text-to-speech
-      - data/lip-sync/output:/output # Legt video_X.mp4 ab
+      - ./data/avatar-generation/output:/input # Enthält avatar.png
+      - ./data/text-to-speech/output:/input/tts # Enthält audio_X.wav von text-to-speech
+      - ./data/lip-sync/output:/output # Legt video_X.mp4 ab
   
   video-generation:
     image: video-generation
     build:
-      context: ../video-generation
+      context: ../create-video
       dockerfile: Dockerfile
     depends_on:
       lip-sync:
         condition: service_completed_successfully
     volumes:
-      - data/video-generation/input:/input # Wird von GUI angelegt, enthält slides.pptx
-      - data/lip-sync/output:/input/ls # Enthält video_X.mp4 von lip-sync
-      - data/video-generation/output:/output # Legt video.mp4 ab
+      - ./data/video-generation/input:/input # Wird von GUI angelegt, enthält slides.pptx
+      - ./data/lip-sync/output:/input/ls # Enthält video_X.mp4 von lip-sync
+      - ./data/video-generation/output:/output # Legt video.mp4 ab
 
 # Output von video generation umbennen in slide Titel und in cwd verschieben
