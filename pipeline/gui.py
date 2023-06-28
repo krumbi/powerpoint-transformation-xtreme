@@ -24,6 +24,18 @@ def show_ui(voices: list[str]):
         help="Addition to text prompt in order to customize style",
     )
     parser.add_argument(
+        "openai_api_key",
+        metavar="OpenAI API key",
+        type=str,
+        help="Key for OpenAI API",
+    )
+    parser.add_argument(
+        "dreamstudio_api_key",
+        metavar="DreamStudio API key",
+        type=str,
+        help="Key for DreamStudio API",
+    )
+    parser.add_argument(
         "avatar_prompt",
         metavar="Avatar prompt",
         default="professor with glasses",
