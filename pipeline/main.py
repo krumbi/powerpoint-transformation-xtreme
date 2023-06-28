@@ -4,6 +4,8 @@ from gooey import Gooey
 
 import pathlib
 import shutil
+import subprocess
+import shlex
 
 steps = ["text-to-text", "text-to-speech", "avatar-generation", "lip-sync", "video-generation"]
 data_folder = pathlib.Path("data")
@@ -26,9 +28,19 @@ def main():
     copy_voice_file(args.voice, args.voice_file)
     create_env_file(args)
 
-    #run_docker()
+    run_docker()
 
-    #copy_output_file(args.output_file, args.pptx_file)
+    copy_output_file(args.output_file, args.pptx_file)
+
+
+def run_docker():
+    command = "docker compose -f compose.yaml up"
+    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+
+    while process.poll() is None:
+        output = process.stdout.readline().decode("utf-8").strip()
+        if (len(output) > 0):
+            print(output)
 
 
 def create_env_file(args):
