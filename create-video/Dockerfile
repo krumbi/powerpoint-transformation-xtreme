@@ -19,6 +19,7 @@ FROM python:3.9
 WORKDIR /app
 
 # Install system dependencies
+RUN apt-get update --fix-missing
 RUN apt update \
     && apt install -y libreoffice poppler-utils ffmpeg \
     && apt clean
