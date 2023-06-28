@@ -20,7 +20,7 @@ def main():
         parser.error("Output is not a valid directory")
 
     # Get a list of audio files
-    audio_files = glob.glob(str(args.input / '*.wav'))
+    audio_files = glob.glob(str((args.input / 'tts') / '*.wav'))
 
     avatar_file = str(args.input / 'avatar.png')
 

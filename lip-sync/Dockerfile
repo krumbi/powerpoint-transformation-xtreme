@@ -22,4 +22,4 @@ WORKDIR /app/Wav2Lip
 COPY multiple_inference.py /app/Wav2Lip
 
 # ENTRYPOINT ["python", "multiple_inference.py", "/input", "/output"]
-ENTRYPOINT python multiple_inference.py input output
+ENTRYPOINT python multiple_inference.py /input /output

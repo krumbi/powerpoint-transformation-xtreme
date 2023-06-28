@@ -67,7 +67,7 @@ def main():
 
     # Find all TXT and MP3 files in the input folder
     file_regex = re.compile(r"slide_(\d+).txt")
-    text_files = [(file, int(file_regex.match(os.path.basename(file)).groups()[0])) for file in glob.glob(os.path.join(input_folder, "*.txt"))]
+    text_files = [(file, int(file_regex.match(os.path.basename(file)).groups()[0])) for file in glob.glob(os.path.join(input_folder, "ttt", "*.txt"))]
     text_files = sorted(text_files, key=lambda x: x[1])
     print(text_files)
     mp3_files = sorted(glob.glob(os.path.join(input_folder, "*.mp3")))
