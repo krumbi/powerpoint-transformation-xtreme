@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  first:
+    image: test-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NAME=first
+      - INPUT=1
+
+  second:
+    image: test-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      first:
+        condition: service_completed_successfully
+    environment:
+      - NAME=second
+      - INPUT=3
+
+  third:
+    image: test-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      second:
+        condition: service_completed_successfully
+    environment:
+      - NAME=third
+      - INPUT=5
+
