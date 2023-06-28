@@ -19,9 +19,9 @@ FROM python:3.9
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update \
-    && apt-get install -y libreoffice poppler-utils ffmpeg \
-    && apt-get clean
+RUN apt update \
+    && apt install -y libreoffice poppler-utils ffmpeg \
+    && apt clean
 
 # Copy script and install Python dependencies
 COPY requirements.txt /app
