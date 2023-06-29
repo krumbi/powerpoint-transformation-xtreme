@@ -38,13 +38,14 @@ def main():
 
 def run_docker():
     command = "docker compose -f compose.yaml up"
-    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
 
     return_code = None
 
     while return_code is None:
         return_code = process.poll()
         output = process.stdout.readline().decode("utf-8").strip()
+
         if (len(output) > 0):
             print(output)
     
