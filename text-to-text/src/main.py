@@ -100,76 +100,81 @@ if args.debug:
 
     log.debug("Writing raw text finished")
 
-log.info("Generating ChatGPT prompt...")
+log.info("Generating ChatGPT prompts...")
 
-chatgpt_prompt = \
-    f"""Can you generate me a text for a spoken presentation based on the following information extracted from presentation slides?
-Please keep the separation in slides. It should be a bit more formal and structured. Please add some information where it is useful.
+prompts = []
+
+for i, text in enumerate(raw_text, start=1):
+    if i > 1:
+        chatgpt_prompt = \
+        f"""Can you generate me a fluent text from the following bullet points?
+It should be a bit more formal and structured. Please add some information where it is useful. Plese be concise so that the text can be spoken in at most 30 seconds.
+Please generate the text in {language_map[args.language]}. {args.prompt if args.prompt != '%NONE%' else ''}
+Thank you very much!"""
+    else:
+        chatgpt_prompt = \
+        f"""Can you generate me a text for a spoken presentation based on the following information extracted from presentation slides?
+It should be a bit more formal and structured. Please add some information where it is useful. Plese be concise so that the text can be spoken in at most 30 seconds.
 Please generate the text in {language_map[args.language]}. {args.prompt if args.prompt != '%NONE%' else ''}
 Thank you very much!"""
 
-chatgpt_prompt += "\n\n"
+    chatgpt_prompt += "\n\n"
 
-for i, text in enumerate(raw_text, start=1):
-    chatgpt_prompt += f"Slide {i}:\n{text}\n\n"
+    chatgpt_prompt += text
 
-chatgpt_prompt.strip()
+    prompts.append(chatgpt_prompt)
 
-log.log(log.INFO, "Generating ChatGPT prompt finished")
+log.log(log.INFO, "Generating ChatGPT prompts finished")
 
 if args.debug:
-    log.debug(f"Writing ChatGPT prompt to {args.output.absolute()}")
+    log.debug(f"Writing ChatGPT prompts to {args.output.absolute()}")
 
-    with open(debug_folder.joinpath("prompt.txt"), "w", encoding="utf-8") as f:
-        f.write(chatgpt_prompt)
+    for i, prompt in enumerate(prompts, start=1):
+        with open(debug_folder.joinpath(f"prompt_{i}.txt"), "w", encoding="utf-8") as f:
+            f.write(prompt)
     
-    log.debug("Writing ChatGPT prompt finished")
+    log.debug("Writing ChatGPT prompts finished")
 
 
+completions = []
 
 if not (args.debug and args.key is None):
     openai.api_key = args.key
 
-    log.info("Requesting ChatGPT completion...")
-    #completion = openai.Completion.create(model=args.model, prompt=chatgpt_prompt, temperature=args.temperature, max_tokens=10000)
-    completion = openai.ChatCompletion.create(model=args.model, messages=[{"role": "user", "content": chatgpt_prompt}], temperature=args.temperature, max_tokens=10000)
+    log.info("Requesting ChatGPT completions...")
 
-    with open(args.output.joinpath("chat.json"), "w", encoding="utf-8") as f:
-        json.dump(completion, f, indent=4)
+    for i, prompt in enumerate(prompts, start=1):
+        completion = openai.ChatCompletion.create(model=args.model, messages=[{"role": "user", "content": prompt}], temperature=args.temperature, max_tokens=5000)
+        completions.append(completion)
+        with open(args.output.joinpath(f"chat_{i}.json"), "w", encoding="utf-8") as f:
+            json.dump(completion, f, indent=4)
 
     log.info("ChatGPT completion finished")
 else:
+    raise NotImplementedError("Reading from file not implemented yet")
     from types import SimpleNamespace
     log.warning("Skipping ChatGPT request. Reading from file.")
     with open(args.output.joinpath("chat.json"), "r", encoding="utf-8") as f:
         completion = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
 
-if len(completion.choices) > 1:
-    log.warning("More than one choice returned by ChatGPT")
+for i, completion in enumerate(completions, start=1):
+    if len(completion.choices) > 1:
+        log.warning("More than one choice returned by ChatGPT")
 
-text : str = completion.choices[0].message.content
+    text : str = completion.choices[0].message.content
 
-log.info("Splitting text...")
+    log.info(f"Removing special characters {i}...")
 
-split_pattern = re.compile(r"Slide (\d+):")
-splitted_text = [part for part in map(str.strip, split_pattern.split(text)) if len(part) > 0]
+    special_character_regex = re.compile(r"[^a-zA-Z0-9\r\n\s]")
+    cleaned_text = special_character_regex.sub("", text)
 
-log.info("Splitted text into slides")
+    log.info(f"Removed special characters {i}")
 
-log.info("Removing special characters...")
+    log.info(f"Writing slides to files {i}...")
 
-special_character_regex = re.compile(r"[^a-zA-Z0-9\r\n\s]")
-cleaned_text = [special_character_regex.sub("", part) for part in splitted_text]
-#cleaned_text = splitted_text
+    with open(args.output.joinpath(f"slide_{i}.txt"), "w", encoding="utf-8") as f:
+        f.write(cleaned_text)
 
-log.info("Removed special characters")
+    log.info(f"Writing slide to file finished {i}")
 
-log.info("Writing slides to files...")
-
-for i in range(1, len(cleaned_text), 2):
-    with open(args.output.joinpath(f"slide_{cleaned_text[i - 1]}.txt"), "w", encoding="utf-8") as f:
-        f.write(cleaned_text[i])
-
-log.info("Writing slides to files finished")
-
-log.info("Text-to-text finished")
+log.info(f"Text-to-text finished")
