@@ -13,9 +13,10 @@ resource_folder = pathlib.Path("resources")
 
 
 @Gooey(program_name="PowerPoint Transformation Xtreme",
-       progress_regex=r"^Step (\d+)/(\d+) done$",
-       progress_expr="x[0] / x[1] * 100",
-       disable_progress_bar_animation=False)
+       progress_regex=r"^pptx-step-(?P<step>\d+)-(.+) exited with code 0$",
+       progress_expr="step / 5 * 100",
+       disable_progress_bar_animation=False,
+       show_restart_button=False)
 def main():
     clear_data_folder()
     generate_folders()
@@ -31,9 +32,30 @@ def main():
     code = run_docker()
 
     if code != 0:
-        raise Exception("Docker failed")
+        raise Exception("Run Docker failed")
+    
+    code = stop_docker()
+
+    if code != 0:
+        raise Exception("Stop Docker failed")
 
     copy_output_file(args.output_file, args.pptx_file)
+
+
+def stop_docker():
+    command = "docker compose -f compose.yaml rm -f -s -v"
+    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
+
+    return_code = None
+
+    while return_code is None:
+        return_code = process.poll()
+        output = process.stdout.readline().decode("utf-8").strip()
+
+        if (len(output) > 0):
+            print(output)
+    
+    return return_code
 
 
 def run_docker():
@@ -65,12 +87,13 @@ def create_env_file(args):
     with open("run.env", "w", encoding='utf-8') as f:
         f.writelines(lines)
 
+
 def copy_output_file(output_file: pathlib.Path, input_file: pathlib.Path):
-    current_output_file_path = data_folder.joinpath("video-generation").joinpath("output").joinpath("video.mp4")
+    current_output_file_path = data_folder.joinpath("video-generation").joinpath("output").joinpath("output.mp4")
 
     if output_file is None:
         output_file = input_file.parent.joinpath(input_file.stem + "_transformed.mp4")
-    print(output_file)
+    
     shutil.copy(current_output_file_path, output_file)
 
 

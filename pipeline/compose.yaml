@@ -6,6 +6,10 @@ services:
     build:
       context: ../text-to-text
       dockerfile: Dockerfile
+    container_name: pptx-step-2-text-to-text
+    depends_on:
+      avatar-generation:
+        condition: service_completed_successfully
     volumes:
       - ./data/text-to-text/input:/input # Wird von GUI angelegt, enthält slides.pptx
       - output-ttt:/output # Legt slide_X.txt ab
@@ -16,6 +20,7 @@ services:
     build:
       context: ../avatar-generation
       dockerfile: Dockerfile
+    container_name: pptx-step-1-avatar-generation
     volumes:
       - ./data/avatar-generation/input:/input # Wird von GUI angelegt, enthält Prompt für Avatar als avatar.txt
       - ./data/avatar-generation/output:/output # Legt avatar.png ab
@@ -26,6 +31,7 @@ services:
     build:
       context: ../voice-cloning/TTS_VC_english
       dockerfile: Dockerfile
+    container_name: pptx-step-3-text-to-speech
     depends_on:
       text-to-text:
         condition: service_completed_successfully
@@ -39,6 +45,7 @@ services:
     build:
       context: ../lip-sync
       dockerfile: Dockerfile
+    container_name: pptx-step-4-lip-sync
     depends_on:
       text-to-speech:
         condition: service_completed_successfully
@@ -54,6 +61,7 @@ services:
     build:
       context: ../create-video
       dockerfile: Dockerfile
+    container_name: pptx-step-5-video-generation
     depends_on:
       lip-sync:
         condition: service_completed_successfully
