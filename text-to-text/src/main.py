@@ -151,11 +151,23 @@ if not (args.debug and args.key is None):
 
     log.info("ChatGPT completion finished")
 else:
-    raise NotImplementedError("Reading from file not implemented yet")
     from types import SimpleNamespace
+    files = []
+    file_regex = re.compile(r"chat_(\d+)\.json")
+    for file in args.output.glob("chat_*.json"):
+        match = file_regex.match(file.name)
+        if match is None:
+            continue
+        files.append((int(match.group(1)), file))
+    
+    files.sort(key=lambda x: x[0])
+    
     log.warning("Skipping ChatGPT request. Reading from file.")
-    with open(args.output.joinpath("chat.json"), "r", encoding="utf-8") as f:
-        completion = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
+    print(files)
+    for _, file in files:
+        with open(file, "r", encoding="utf-8") as f:
+            completion = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
+            completions.append(completion)
 
 for i, completion in enumerate(completions, start=1):
     if len(completion.choices) > 1:
