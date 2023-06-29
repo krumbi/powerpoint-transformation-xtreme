@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import os
+import re
 import glob
 import pathlib
 
@@ -20,7 +21,7 @@ def main():
         parser.error("Output is not a valid directory")
 
     # Get a list of audio files
-    audio_files = glob.glob(str(args.input / '*.wav'))
+    audio_files = sorted(glob.glob(str((args.input / 'tts') / '*.wav')), key=lambda x: int(re.search(r'\d+', x).group()))
 
     avatar_file = str(args.input / 'avatar.png')
 

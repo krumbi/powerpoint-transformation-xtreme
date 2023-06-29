@@ -97,10 +97,8 @@ def main():
 
     # Find all PPTX and MP4 files in the input folder
     pptx_files = glob.glob(os.path.join(input_folder, "*.pptx"))
-    file_regex = re.compile(r"(\d+)\.mp4")
-    mp4_files = [(file, int(file_regex.search(os.path.basename(file)).group(1))) for file in glob.glob(os.path.join(input_folder, "*.mp4"))]
-    mp4_files = sorted(mp4_files, key=lambda x: x[1])
-    # mp4_files = sorted(glob.glob(os.path.join(input_folder, "*.mp4")))
+
+    mp4_files = sorted(glob.glob(os.path.join(input_folder,"ls", "*.mp4")), key=lambda x: int(re.search(r'\d+', x).group()))
 
     # Convert each PPTX file to PDF and then to video
     all_image_paths = []
