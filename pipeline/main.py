@@ -69,7 +69,7 @@ def copy_output_file(output_file: pathlib.Path, input_file: pathlib.Path):
 
     if output_file is None:
         output_file = input_file.parent.joinpath(input_file.stem + "_transformed.mp4")
-
+    print(output_file)
     shutil.copy(current_output_file_path, output_file)
 
 
