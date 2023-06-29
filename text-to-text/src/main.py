@@ -7,12 +7,13 @@ import sys
 import openai
 import json
 import re
+import time
 
 language_map = {"en": "English", "de": "German"}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', metavar='INPUT', type=str, help='the input file')
-parser.add_argument('-k', '--key', metavar='KEY', type=str, help='the OpenAI API key')
+parser.add_argument('-k', '--key', metavar='KEY', type=str, required=True, help='the OpenAI API key')
 parser.add_argument('-o', '--output', metavar='OUTPUT', default=pathlib.Path("output"), type=pathlib.Path, help='the output directory')
 parser.add_argument('-m', '--model', metavar='MODEL', default="gpt-3.5-turbo-16k", type=str, help='the OpenAI model')
 parser.add_argument('-t', '--temperature', metavar='TEMPERATURE', default=0.3, type=float, help='the OpenAI temperature')
@@ -144,12 +145,20 @@ if not (args.debug and args.key is None):
     log.info("Requesting ChatGPT completions...")
 
     for i, prompt in enumerate(prompts, start=1):
+        log.info(f"Requesting completion {i} of {len(prompts)}")
+        
         completion = openai.ChatCompletion.create(model=args.model, messages=[{"role": "user", "content": prompt}], temperature=args.temperature, max_tokens=5000)
         completions.append(completion)
         with open(args.output.joinpath(f"chat_{i}.json"), "w", encoding="utf-8") as f:
             json.dump(completion, f, indent=4)
 
-    log.info("ChatGPT completion finished")
+        log.info(f"ChatGPT completion {i} of {len(prompts)} finished")
+
+        if i > 0 and i % 3 == 0:
+            log.info("Waiting 60 seconds to avoid OpenAI API rate limit...")
+            time.sleep(60)
+
+    log.info("ChatGPT completions finished")
 else:
     raise NotImplementedError("Reading from file not implemented yet")
     from types import SimpleNamespace
